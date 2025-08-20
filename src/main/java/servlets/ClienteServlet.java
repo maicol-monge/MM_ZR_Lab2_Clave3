@@ -1,87 +1,46 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package servlets;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import modelo.Cliente;
+import utils.GestorDatos;
 
-/**
- *
- * @author monza
- */
 @WebServlet(name = "ClienteServlet", urlPatterns = {"/ClienteServlet"})
 public class ClienteServlet extends HttpServlet {
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ClienteServlet</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ClienteServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        HttpSession session = request.getSession();
+        ArrayList<Cliente> clientes = GestorDatos.getClientes(session);
+        // Obtener datos del formulario
+        String identificador = request.getParameter("identificador");
+        String nombre = request.getParameter("nombre");
+        String edadStr = request.getParameter("edad");
+        // Validaciones
+        String error = GestorDatos.validarCliente(clientes, identificador, nombre, edadStr);
+        if (error != null) {
+            request.setAttribute("mensaje", error);
+            request.getRequestDispatcher("/clientes/registrarCliente.jsp").forward(request, response);
+            return;
+        }
+        // Si todo OK, crear y agregar cliente
+        Cliente cliente = new Cliente(identificador, nombre, Integer.parseInt(edadStr));
+        clientes.add(cliente);
+        session.setAttribute("clientes", clientes);
+        request.setAttribute("mensaje", "Cliente registrado exitosamente.");
+        request.getRequestDispatcher("/clientes/registrarCliente.jsp").forward(request, response);
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        ArrayList<Cliente> clientes = GestorDatos.getClientes(session);
+        request.setAttribute("clientes", clientes);
+        request.getRequestDispatcher("/clientes/listarClientes.jsp").forward(request, response);
+    }
 }
