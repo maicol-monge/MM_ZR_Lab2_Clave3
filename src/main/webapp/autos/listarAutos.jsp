@@ -95,7 +95,9 @@
                 <c:forEach var="auto" items="${autos}">
                     <div class="col">
                         <div class="card h-100 shadow">
-                            <img src="${pageContext.request.contextPath}/${auto.imagen}" width="80" alt="Foto auto">
+                            <div class="d-flex justify-content-center align-items-center" style="height:180px;">
+                                <img src="${auto.imagen}" alt="Foto auto" style="max-width:100%; max-height:160px; object-fit:contain;">
+                            </div>
                             <div class="card-body text-center">
                                 <h5 class="card-title">${auto.marca} ${auto.modelo}</h5>
                                 <p class="card-text">

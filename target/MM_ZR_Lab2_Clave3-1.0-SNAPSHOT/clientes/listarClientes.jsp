@@ -50,6 +50,7 @@
                                 <th>Identificador</th>
                                 <th>Nombre</th>
                                 <th>Edad</th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -58,6 +59,14 @@
                                     <td>${cliente.identificador}</td>
                                     <td>${cliente.nombre}</td>
                                     <td>${cliente.edad}</td>
+                                    <td>
+                                        <form action="${pageContext.request.contextPath}/CompraServlet" method="get" style="display:inline;">
+                                            <input type="hidden" name="idCliente" value="${cliente.identificador}">
+                                            <button type="submit" class="btn btn-primary btn-sm">
+                                                Consultar compras
+                                            </button>
+                                        </form>
+                                    </td>
                                 </tr>
                             </c:forEach>
                         </tbody>
@@ -67,9 +76,8 @@
         </c:if>
 
         <div class="text-center mt-3 ">
-                        <a href="${pageContext.request.contextPath}/index.jsp" class="btn btn-outline-light btn-primary">Volver al Inicio</a>
-
-                    </div>
+            <a href="${pageContext.request.contextPath}/index.jsp" class="btn btn-outline-light btn-primary">Volver al Inicio</a>
+        </div>
     </div>
 
     <!-- Bootstrap JS -->

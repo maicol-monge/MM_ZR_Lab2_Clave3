@@ -47,7 +47,7 @@
                         <div class="alert alert-custom text-center">${mensaje}</div>
                     </c:if>
 
-                    <form action="../AutoServlet" method="post" enctype="multipart/form-data">
+                    <form action="${pageContext.request.contextPath}/AutoServlet" method="post">
                         <div class="mb-3">
                             <label class="form-label">Marca</label>
                             <input type="text" name="marca" class="form-control" required>
@@ -57,8 +57,8 @@
                             <input type="text" name="modelo" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Imagen</label>
-                            <input type="file" name="imagen" class="form-control" accept="image/*" required>
+                            <label class="form-label">Imagen (URL)</label>
+                            <input type="text" name="imagen" class="form-control" required placeholder="https://ejemplo.com/auto.jpg">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Año</label>
@@ -75,7 +75,6 @@
 
                     <div class="text-center mt-3 ">
                         <a href="${pageContext.request.contextPath}/index.jsp" class="btn btn-outline-light btn-primary">Volver al Inicio</a>
-
                     </div>
                 </div>
             </div>

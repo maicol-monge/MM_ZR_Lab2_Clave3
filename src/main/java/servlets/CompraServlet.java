@@ -9,23 +9,13 @@ import javax.servlet.http.*;
 import modelo.Auto;
 import modelo.Cliente;
 import modelo.Compra;
-import utils.GestorDatos;
 
 @WebServlet(name = "CompraServlet", urlPatterns = {"/CompraServlet"})
 public class CompraServlet extends HttpServlet {
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        ArrayList<Cliente> clientes = (ArrayList<Cliente>) session.getAttribute("clientes");
-        if (clientes == null) {
-            clientes = new ArrayList<>();
-            session.setAttribute("clientes", clientes);
-        }
-        ArrayList<Auto> autos = (ArrayList<Auto>) session.getAttribute("autos");
-        if (autos == null) {
-            autos = new ArrayList<>();
-            session.setAttribute("autos", autos);
-        }
         ArrayList<Compra> compras = (ArrayList<Compra>) session.getAttribute("compras");
         if (compras == null) {
             compras = new ArrayList<>();
@@ -33,14 +23,53 @@ public class CompraServlet extends HttpServlet {
         }
 
         String idCliente = request.getParameter("idCliente");
-        String codigoAuto = request.getParameter("codigoAuto");
+        ArrayList<Compra> resultado = new ArrayList<>();
+        double totalComprado = 0;
 
-        String error = GestorDatos.validarCompra(clientes, autos, idCliente, codigoAuto);
-        if (error != null) {
-            request.setAttribute("mensaje", error);
-            request.getRequestDispatcher("/compras/comprarAuto.jsp").forward(request, response);
-            return;
+        if (idCliente != null && !idCliente.trim().isEmpty()) {
+            for (Compra c : compras) {
+                if (c.getCliente().getIdentificador().equalsIgnoreCase(idCliente)) {
+                    resultado.add(c);
+                    totalComprado += c.getPrecio();
+                }
+            }
+            request.setAttribute("compras", resultado);
+            request.setAttribute("totalComprado", totalComprado);
+            if (resultado.isEmpty()) {
+                request.setAttribute("mensaje", "No hay compras para ese cliente.");
+            }
+        } else {
+            request.setAttribute("compras", compras);
+            request.setAttribute("totalComprado", null);
+            if (compras.isEmpty()) {
+                request.setAttribute("mensaje", "No se han realizado compras en el sistema.");
+            }
         }
+        request.getRequestDispatcher("/compras/historialCompras.jsp").forward(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        ArrayList<Cliente> clientes = (ArrayList<Cliente>) session.getAttribute("clientes");
+        ArrayList<Auto> autos = (ArrayList<Auto>) session.getAttribute("autos");
+        ArrayList<Compra> compras = (ArrayList<Compra>) session.getAttribute("compras");
+        if (clientes == null) {
+            clientes = new ArrayList<>();
+            session.setAttribute("clientes", clientes);
+        }
+        if (autos == null) {
+            autos = new ArrayList<>();
+            session.setAttribute("autos", autos);
+        }
+        if (compras == null) {
+            compras = new ArrayList<>();
+            session.setAttribute("compras", compras);
+        }
+
+        String idCliente = request.getParameter("idCliente");
+        String codigoAuto = request.getParameter("codigoAuto");
 
         Cliente cliente = null;
         for (Cliente c : clientes) {
@@ -57,43 +86,19 @@ public class CompraServlet extends HttpServlet {
             }
         }
 
+        if (cliente == null || auto == null) {
+            request.setAttribute("mensaje", "Cliente o auto no válido.");
+            request.getRequestDispatcher("/compras/comprarAuto.jsp").forward(request, response);
+            return;
+        }
+
         auto.setEstado("Vendido");
         Compra compra = new Compra(cliente, auto, new Date(), auto.getPrecio());
         compras.add(compra);
         session.setAttribute("autos", autos);
         session.setAttribute("compras", compras);
-        // Redirigir al index después de registrar
-        response.sendRedirect(request.getContextPath() + "/index.jsp");
-    }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        ArrayList<Compra> compras = (ArrayList<Compra>) session.getAttribute("compras");
-        if (compras == null) {
-            compras = new ArrayList<>();
-            session.setAttribute("compras", compras);
-        }
-
-        String idCliente = request.getParameter("idCliente");
-        ArrayList<Compra> resultado = new ArrayList<>();
-
-        if (idCliente != null && !idCliente.isEmpty()) {
-            for (Compra c : compras) {
-                if (c.getCliente().getIdentificador().equals(idCliente)) {
-                    resultado.add(c);
-                }
-            }
-            request.setAttribute("compras", resultado);
-            if (resultado.isEmpty()) {
-                request.setAttribute("mensaje", "El cliente no tiene autos comprados.");
-            }
-        } else {
-            request.setAttribute("compras", compras);
-            if (compras.isEmpty()) {
-                request.setAttribute("mensaje", "No se han realizado compras en el sistema.");
-            }
-        }
-        request.getRequestDispatcher("/compras/historialCompras.jsp").forward(request, response);
+        request.setAttribute("mensaje", "Compra realizada exitosamente.");
+        request.getRequestDispatcher("/compras/comprarAuto.jsp").forward(request, response);
     }
 }

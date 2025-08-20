@@ -53,8 +53,27 @@
             <div class="card">
                 <h2 class="text-center mb-4">Historial de Compras</h2>
 
+                <!-- Formulario de filtro por cliente -->
+<form class="row mb-4" method="get" action="${pageContext.request.contextPath}/CompraServlet">
+    <div class="col-md-6">
+        <input type="text" name="idCliente" class="form-control" placeholder="Buscar por ID o nombre de cliente">
+    </div>
+    <div class="col-md-3 d-grid">
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+    </div>
+    <div class="col-md-3 d-grid">
+        <a href="${pageContext.request.contextPath}/CompraServlet" class="btn btn-outline-secondary">Ver todos</a>
+    </div>
+</form>
+
                 <c:if test="${not empty mensaje}">
                     <div class="alert alert-custom text-center">${mensaje}</div>
+                </c:if>
+
+                <c:if test="${not empty totalComprado}">
+                    <div class="alert alert-info text-center">
+                        Total comprado por el cliente: $${totalComprado}
+                    </div>
                 </c:if>
 
                 <c:if test="${not empty compras}">
