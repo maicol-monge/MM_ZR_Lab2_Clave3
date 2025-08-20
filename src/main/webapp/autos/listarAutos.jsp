@@ -47,8 +47,47 @@
     <div class="container">
         <h2 class="text-center text-white mb-5">Listado de Autos</h2>
 
+        <!-- Buscador y filtros -->
+        <form class="row g-3 mb-4" method="get" action="${pageContext.request.contextPath}/AutoServlet">
+            <div class="col-md-3">
+                <input type="text" name="codigo" class="form-control" placeholder="Buscar por código">
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="marca" class="form-control" placeholder="Buscar por marca">
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="modelo" class="form-control" placeholder="Buscar por modelo">
+            </div>
+            <div class="col-md-3">
+                <select name="filtro" class="form-select">
+                    <option value="">Todos</option>
+                    <option value="disponibles">Disponibles</option>
+                    <option value="vendidos">Vendidos</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input type="number" name="min" class="form-control" placeholder="Precio mínimo" min="0">
+            </div>
+            <div class="col-md-3">
+                <input type="number" name="max" class="form-control" placeholder="Precio máximo" min="0">
+            </div>
+            <div class="col-md-3 d-grid">
+                <button type="submit" class="btn btn-primary">Buscar / Filtrar</button>
+            </div>
+            <div class="col-md-3 d-grid">
+                <a href="${pageContext.request.contextPath}/AutoServlet" class="btn btn-secondary">Limpiar</a>
+            </div>
+        </form>
+
         <c:if test="${empty autos}">
-            <div class="alert alert-warning text-center">No hay autos registrados.</div>
+            <c:choose>
+                <c:when test="${not empty param.codigo or not empty param.marca or not empty param.modelo or not empty param.filtro or not empty param.min or not empty param.max}">
+                    <div class="alert alert-danger text-center">No hay coincidencias con los filtros/búsqueda seleccionados.</div>
+                </c:when>
+                <c:otherwise>
+                    <div class="alert alert-warning text-center">No hay autos registrados.</div>
+                </c:otherwise>
+            </c:choose>
         </c:if>
 
         <c:if test="${not empty autos}">
@@ -56,7 +95,7 @@
                 <c:forEach var="auto" items="${autos}">
                     <div class="col">
                         <div class="card h-100 shadow">
-                            <img src="${auto.imagen}" class="card-img-top" alt="${auto.marca} ${auto.modelo}" style="height:180px; object-fit:cover;">
+                            <img src="${pageContext.request.contextPath}/${auto.imagen}" width="80" alt="Foto auto">
                             <div class="card-body text-center">
                                 <h5 class="card-title">${auto.marca} ${auto.modelo}</h5>
                                 <p class="card-text">

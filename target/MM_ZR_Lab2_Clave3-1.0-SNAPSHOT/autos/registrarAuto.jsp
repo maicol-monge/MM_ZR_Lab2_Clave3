@@ -47,7 +47,7 @@
                         <div class="alert alert-custom text-center">${mensaje}</div>
                     </c:if>
 
-                    <form action="../AutoServlet" method="post">
+                    <form action="../AutoServlet" method="post" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label class="form-label">Marca</label>
                             <input type="text" name="marca" class="form-control" required>
@@ -57,8 +57,8 @@
                             <input type="text" name="modelo" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Imagen (URL)</label>
-                            <input type="text" name="imagen" class="form-control" required>
+                            <label class="form-label">Imagen</label>
+                            <input type="file" name="imagen" class="form-control" accept="image/*" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Año</label>

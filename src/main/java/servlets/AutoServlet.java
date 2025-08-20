@@ -1,14 +1,17 @@
 package servlets;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import modelo.Auto;
 import utils.GestorDatos;
 
 @WebServlet(name = "AutoServlet", urlPatterns = {"/AutoServlet"})
+@MultipartConfig
 public class AutoServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -21,21 +24,26 @@ public class AutoServlet extends HttpServlet {
 
         String marca = request.getParameter("marca");
         String modelo = request.getParameter("modelo");
-        String imagen = request.getParameter("imagen");
         String anioStr = request.getParameter("anio");
         String precioStr = request.getParameter("precio");
 
-        String error = GestorDatos.validarAuto(autos, marca, modelo, anioStr, precioStr);
-        if (error != null) {
-            request.setAttribute("mensaje", error);
+        Part imagenPart = request.getPart("imagen");
+        if (imagenPart == null || imagenPart.getSize() == 0) {
+            request.setAttribute("mensaje", "Debes subir una imagen.");
             request.getRequestDispatcher("/autos/registrarAuto.jsp").forward(request, response);
             return;
         }
+        String nombreArchivo = System.currentTimeMillis() + "_" + imagenPart.getSubmittedFileName();
+        String rutaCarpeta = getServletContext().getRealPath("/imagenes_autos/");
+        File carpeta = new File(rutaCarpeta);
+        if (!carpeta.exists()) carpeta.mkdirs();
+        String rutaImagen = rutaCarpeta + File.separator + nombreArchivo;
+        imagenPart.write(rutaImagen);
+        String imagen = "imagenes_autos/" + nombreArchivo;
 
         Auto auto = new Auto(marca, modelo, imagen, Integer.parseInt(anioStr), Double.parseDouble(precioStr), "Disponible");
         autos.add(auto);
         session.setAttribute("autos", autos);
-        // Redirigir al index después de registrar
         response.sendRedirect(request.getContextPath() + "/index.jsp");
     }
 

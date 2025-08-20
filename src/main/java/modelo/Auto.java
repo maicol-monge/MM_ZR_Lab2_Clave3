@@ -55,5 +55,4 @@ public class Auto {
                 ", estado='" + estado + '\'' +
                 '}';
     }
-    
 }
