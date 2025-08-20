@@ -4,10 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 import modelo.Cliente;
 import utils.GestorDatos;
 
@@ -16,7 +13,7 @@ public class ClienteServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        ArrayList<Cliente> clientes = GestorDatos.getClientes(session);
+        ArrayList<Cliente> clientes = (ArrayList<Cliente>) session.getAttribute("clientes");
         if (clientes == null) {
             clientes = new ArrayList<>();
             session.setAttribute("clientes", clientes);
@@ -35,14 +32,17 @@ public class ClienteServlet extends HttpServlet {
         Cliente cliente = new Cliente(nombre, Integer.parseInt(edadStr));
         clientes.add(cliente);
         session.setAttribute("clientes", clientes);
-        request.setAttribute("mensaje", "Cliente registrado exitosamente. Identificador generado: " + cliente.getIdentificador());
-        request.getRequestDispatcher("/clientes/registrarCliente.jsp").forward(request, response);
+        // Redirigir al index después de registrar
+        response.sendRedirect(request.getContextPath() + "/index.jsp");
+        // Si quieres mostrar un mensaje, puedes guardarlo en sesión antes de redirigir
+        // session.setAttribute("mensaje", "Cliente registrado exitosamente. Identificador generado: " + cliente.getIdentificador());
+        // response.sendRedirect(request.getContextPath() + "/index.jsp");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        ArrayList<Cliente> clientes = GestorDatos.getClientes(session);
+        ArrayList<Cliente> clientes = (ArrayList<Cliente>) session.getAttribute("clientes");
         if (clientes == null) {
             clientes = new ArrayList<>();
             session.setAttribute("clientes", clientes);

@@ -5,10 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 import modelo.Auto;
 import modelo.Cliente;
 import modelo.Compra;
@@ -19,14 +16,25 @@ public class CompraServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        ArrayList<Cliente> clientes = GestorDatos.getClientes(session);
-        ArrayList<Auto> autos = GestorDatos.getAutos(session);
-        ArrayList<Compra> compras = GestorDatos.getCompras(session);
+        ArrayList<Cliente> clientes = (ArrayList<Cliente>) session.getAttribute("clientes");
+        if (clientes == null) {
+            clientes = new ArrayList<>();
+            session.setAttribute("clientes", clientes);
+        }
+        ArrayList<Auto> autos = (ArrayList<Auto>) session.getAttribute("autos");
+        if (autos == null) {
+            autos = new ArrayList<>();
+            session.setAttribute("autos", autos);
+        }
+        ArrayList<Compra> compras = (ArrayList<Compra>) session.getAttribute("compras");
+        if (compras == null) {
+            compras = new ArrayList<>();
+            session.setAttribute("compras", compras);
+        }
 
         String idCliente = request.getParameter("idCliente");
         String codigoAuto = request.getParameter("codigoAuto");
 
-        // Validaciones
         String error = GestorDatos.validarCompra(clientes, autos, idCliente, codigoAuto);
         if (error != null) {
             request.setAttribute("mensaje", error);
@@ -34,7 +42,6 @@ public class CompraServlet extends HttpServlet {
             return;
         }
 
-        // Buscar cliente y auto
         Cliente cliente = null;
         for (Cliente c : clientes) {
             if (c.getIdentificador().equals(idCliente)) {
@@ -50,21 +57,23 @@ public class CompraServlet extends HttpServlet {
             }
         }
 
-        // Procesar compra
         auto.setEstado("Vendido");
         Compra compra = new Compra(cliente, auto, new Date(), auto.getPrecio());
         compras.add(compra);
         session.setAttribute("autos", autos);
         session.setAttribute("compras", compras);
-
-        request.setAttribute("mensaje", "Compra realizada exitosamente.");
-        request.getRequestDispatcher("/compras/comprarAuto.jsp").forward(request, response);
+        // Redirigir al index después de registrar
+        response.sendRedirect(request.getContextPath() + "/index.jsp");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        ArrayList<Compra> compras = GestorDatos.getCompras(session);
+        ArrayList<Compra> compras = (ArrayList<Compra>) session.getAttribute("compras");
+        if (compras == null) {
+            compras = new ArrayList<>();
+            session.setAttribute("compras", compras);
+        }
 
         String idCliente = request.getParameter("idCliente");
         ArrayList<Compra> resultado = new ArrayList<>();

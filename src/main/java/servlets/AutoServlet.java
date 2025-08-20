@@ -4,10 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 import modelo.Auto;
 import utils.GestorDatos;
 
@@ -16,7 +13,7 @@ public class AutoServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        ArrayList<Auto> autos = GestorDatos.getAutos(session);
+        ArrayList<Auto> autos = (ArrayList<Auto>) session.getAttribute("autos");
         if (autos == null) {
             autos = new ArrayList<>();
             session.setAttribute("autos", autos);
@@ -38,14 +35,14 @@ public class AutoServlet extends HttpServlet {
         Auto auto = new Auto(marca, modelo, imagen, Integer.parseInt(anioStr), Double.parseDouble(precioStr), "Disponible");
         autos.add(auto);
         session.setAttribute("autos", autos);
-        request.setAttribute("mensaje", "Auto registrado exitosamente. Código generado: " + auto.getCodigo());
-        request.getRequestDispatcher("/autos/registrarAuto.jsp").forward(request, response);
+        // Redirigir al index después de registrar
+        response.sendRedirect(request.getContextPath() + "/index.jsp");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        ArrayList<Auto> autos = GestorDatos.getAutos(session);
+        ArrayList<Auto> autos = (ArrayList<Auto>) session.getAttribute("autos");
         if (autos == null) {
             autos = new ArrayList<>();
             session.setAttribute("autos", autos);
