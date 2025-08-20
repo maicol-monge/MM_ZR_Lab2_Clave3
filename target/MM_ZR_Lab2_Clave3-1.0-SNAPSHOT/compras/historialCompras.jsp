@@ -56,7 +56,7 @@
                 <!-- Formulario de filtro por cliente -->
 <form class="row mb-4" method="get" action="${pageContext.request.contextPath}/CompraServlet">
     <div class="col-md-6">
-        <input type="text" name="idCliente" class="form-control" placeholder="Buscar por ID o nombre de cliente">
+        <input type="text" name="idCliente" class="form-control" placeholder="Buscar por ID">
     </div>
     <div class="col-md-3 d-grid">
         <button type="submit" class="btn btn-primary">Filtrar</button>
