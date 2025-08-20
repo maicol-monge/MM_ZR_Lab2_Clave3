@@ -5,8 +5,6 @@
 
 package utils;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import javax.servlet.http.HttpSession;
 import modelo.Auto;
 import modelo.Cliente;
@@ -46,30 +44,38 @@ import modelo.Compra;
 		}
 
 		// Validaciones para autos
-		public static String validarAuto(ArrayList<Auto> autos, String codigo, String marca, String modelo, String anioStr, String precioStr) {
-			if (codigo == null || codigo.trim().isEmpty()) return "El código del auto no puede estar vacío.";
-			for (Auto a : autos) if (a.getCodigo().equals(codigo)) return "El código del auto debe ser único.";
+		public static String validarAuto(ArrayList<Auto> autos, String marca, String modelo, String anioStr, String precioStr) {
 			if (autos.size() >= 10) return "No se pueden registrar más de 10 autos.";
 			if (marca == null || marca.trim().isEmpty()) return "La marca no puede estar vacía.";
 			if (modelo == null || modelo.trim().isEmpty()) return "El modelo no puede estar vacío.";
 			int anio;
-			try { anio = Integer.parseInt(anioStr); } catch (Exception e) { return "El año debe ser un número entero válido."; }
-		int actual = Calendar.getInstance().get(Calendar.YEAR);
-			if (anio < 1980 || anio > actual) return "El año debe estar entre 1980 y " + actual + ".";
+			try {
+				anio = Integer.parseInt(anioStr);
+			} catch (Exception e) {
+				return "El año debe ser un número entero válido.";
+			}
+			int currentYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
+			if (anio < 1980 || anio > currentYear) return "El año debe estar entre 1980 y " + currentYear + ".";
 			double precio;
-			try { precio = Double.parseDouble(precioStr); } catch (Exception e) { return "El precio debe ser un número válido."; }
+			try {
+				precio = Double.parseDouble(precioStr);
+			} catch (Exception e) {
+				return "El precio debe ser un número válido.";
+			}
 			if (precio <= 0) return "El precio debe ser mayor a cero.";
 			return null;
 		}
 
 		// Validaciones para clientes
-		public static String validarCliente(ArrayList<Cliente> clientes, String identificador, String nombre, String edadStr) {
-			if (identificador == null || identificador.trim().isEmpty()) return "El identificador no puede estar vacío.";
-			for (Cliente c : clientes) if (c.getIdentificador().equals(identificador)) return "El identificador debe ser único.";
+		public static String validarCliente(ArrayList<Cliente> clientes, String nombre, String edadStr) {
 			if (nombre == null || nombre.trim().isEmpty()) return "El nombre no puede estar vacío.";
-			if (nombre.length() < 3) return "El nombre debe tener al menos 3 caracteres.";
+			if (nombre.trim().length() < 3) return "El nombre debe tener al menos 3 caracteres.";
 			int edad;
-			try { edad = Integer.parseInt(edadStr); } catch (Exception e) { return "La edad debe ser un número entero válido."; }
+			try {
+				edad = Integer.parseInt(edadStr);
+			} catch (Exception e) {
+				return "La edad debe ser un número entero válido.";
+			}
 			if (edad < 18) return "La edad debe ser mayor o igual a 18 años.";
 			return null;
 		}

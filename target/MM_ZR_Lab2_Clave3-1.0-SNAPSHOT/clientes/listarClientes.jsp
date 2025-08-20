@@ -67,8 +67,9 @@
         </c:if>
 
         <div class="text-center mt-3 ">
-            <a href="../index.jsp" class="btn btn-primary">Volver al Inicio</a>
-        </div>
+                        <a href="${pageContext.request.contextPath}/index.jsp" class="btn btn-outline-light btn-primary">Volver al Inicio</a>
+
+                    </div>
     </div>
 
     <!-- Bootstrap JS -->

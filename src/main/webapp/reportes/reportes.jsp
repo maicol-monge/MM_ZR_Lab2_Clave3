@@ -68,9 +68,10 @@
                     <li><strong>Promedio precio autos disponibles:</strong> $${promedioDisponibles}</li>
                     <li><strong>Total ingresos por ventas:</strong> $${totalIngresos}</li>
                 </ul>
-                <div class="text-center mt-3">
-                    <a href="../index.jsp" class="btn btn-outline-light">Volver al Inicio</a>
-                </div>
+                <div class="text-center mt-3 ">
+                        <a href="${pageContext.request.contextPath}/index.jsp" class="btn btn-outline-light btn-primary">Volver al Inicio</a>
+
+                    </div>
             </div>
         </div>
     </div>

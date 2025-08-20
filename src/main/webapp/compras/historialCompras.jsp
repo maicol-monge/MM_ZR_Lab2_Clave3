@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -72,7 +73,9 @@
                                     <tr>
                                         <td>${compra.cliente.nombre}</td>
                                         <td>${compra.auto.marca} ${compra.auto.modelo}</td>
-                                        <td>${compra.fecha}</td>
+                                        <td>
+                                            <fmt:formatDate value="${compra.fecha}" pattern="dd/MM/yyyy HH:mm" />
+                                        </td>
                                         <td>${compra.precio}</td>
                                     </tr>
                                 </c:forEach>
@@ -81,8 +84,8 @@
                     </div>
                 </c:if>
 
-                <div class="text-center mt-3">
-                    <a href="../index.jsp" class="btn btn-outline-light">Volver al Inicio</a>
+                <div class="text-center mt-3 ">
+                        <a href="${pageContext.request.contextPath}/index.jsp" class="btn btn-outline-light btn-primary">Volver al Inicio</a>
                 </div>
             </div>
         </div>

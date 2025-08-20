@@ -17,25 +17,28 @@ public class AutoServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         ArrayList<Auto> autos = GestorDatos.getAutos(session);
-        // Obtener datos del formulario
-        String codigo = request.getParameter("codigo");
+        if (autos == null) {
+            autos = new ArrayList<>();
+            session.setAttribute("autos", autos);
+        }
+
         String marca = request.getParameter("marca");
         String modelo = request.getParameter("modelo");
         String imagen = request.getParameter("imagen");
         String anioStr = request.getParameter("anio");
         String precioStr = request.getParameter("precio");
-        // Validaciones
-        String error = GestorDatos.validarAuto(autos, codigo, marca, modelo, anioStr, precioStr);
+
+        String error = GestorDatos.validarAuto(autos, marca, modelo, anioStr, precioStr);
         if (error != null) {
             request.setAttribute("mensaje", error);
             request.getRequestDispatcher("/autos/registrarAuto.jsp").forward(request, response);
             return;
         }
-        // Si todo OK, crear y agregar auto
-        Auto auto = new Auto(codigo, marca, modelo, imagen, Integer.parseInt(anioStr), Double.parseDouble(precioStr), "Disponible");
+
+        Auto auto = new Auto(marca, modelo, imagen, Integer.parseInt(anioStr), Double.parseDouble(precioStr), "Disponible");
         autos.add(auto);
         session.setAttribute("autos", autos);
-        request.setAttribute("mensaje", "Auto registrado exitosamente.");
+        request.setAttribute("mensaje", "Auto registrado exitosamente. Código generado: " + auto.getCodigo());
         request.getRequestDispatcher("/autos/registrarAuto.jsp").forward(request, response);
     }
 
@@ -43,6 +46,10 @@ public class AutoServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         ArrayList<Auto> autos = GestorDatos.getAutos(session);
+        if (autos == null) {
+            autos = new ArrayList<>();
+            session.setAttribute("autos", autos);
+        }
         String filtro = request.getParameter("filtro");
         ArrayList<Auto> resultado = new ArrayList<>();
         if (filtro == null || filtro.isEmpty()) {

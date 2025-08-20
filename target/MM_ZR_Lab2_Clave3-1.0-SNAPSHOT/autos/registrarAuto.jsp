@@ -49,10 +49,6 @@
 
                     <form action="../AutoServlet" method="post">
                         <div class="mb-3">
-                            <label class="form-label">Código</label>
-                            <input type="text" name="codigo" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
                             <label class="form-label">Marca</label>
                             <input type="text" name="marca" class="form-control" required>
                         </div>

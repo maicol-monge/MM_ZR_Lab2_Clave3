@@ -17,22 +17,25 @@ public class ClienteServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         ArrayList<Cliente> clientes = GestorDatos.getClientes(session);
-        // Obtener datos del formulario
-        String identificador = request.getParameter("identificador");
+        if (clientes == null) {
+            clientes = new ArrayList<>();
+            session.setAttribute("clientes", clientes);
+        }
+
         String nombre = request.getParameter("nombre");
         String edadStr = request.getParameter("edad");
-        // Validaciones
-        String error = GestorDatos.validarCliente(clientes, identificador, nombre, edadStr);
+
+        String error = GestorDatos.validarCliente(clientes, nombre, edadStr);
         if (error != null) {
             request.setAttribute("mensaje", error);
             request.getRequestDispatcher("/clientes/registrarCliente.jsp").forward(request, response);
             return;
         }
-        // Si todo OK, crear y agregar cliente
-        Cliente cliente = new Cliente(identificador, nombre, Integer.parseInt(edadStr));
+
+        Cliente cliente = new Cliente(nombre, Integer.parseInt(edadStr));
         clientes.add(cliente);
         session.setAttribute("clientes", clientes);
-        request.setAttribute("mensaje", "Cliente registrado exitosamente.");
+        request.setAttribute("mensaje", "Cliente registrado exitosamente. Identificador generado: " + cliente.getIdentificador());
         request.getRequestDispatcher("/clientes/registrarCliente.jsp").forward(request, response);
     }
 
@@ -40,6 +43,10 @@ public class ClienteServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         ArrayList<Cliente> clientes = GestorDatos.getClientes(session);
+        if (clientes == null) {
+            clientes = new ArrayList<>();
+            session.setAttribute("clientes", clientes);
+        }
         request.setAttribute("clientes", clientes);
         request.getRequestDispatcher("/clientes/listarClientes.jsp").forward(request, response);
     }

@@ -47,7 +47,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
         <div class="container">
-            <a class="navbar-brand" href="#">🚗 Sistema de Autos</a>
+            <a class="navbar-brand " href="#">Maicol Monge || Ever Zamora - Laboratorio 2 - Multiplataforma</a>
         </div>
     </nav>
 
@@ -122,7 +122,7 @@
                 </div>
             </div>
 
-            <div class="col">
+            <div class="col mb-5">
                 <div class="card text-center h-100 shadow">
                     <div class="card-body">
                         <i class="bi bi-bar-chart-line icon mb-3"></i>
